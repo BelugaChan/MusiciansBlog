@@ -1,0 +1,69 @@
+﻿name: musService
+services:
+  # authmetodology-api:
+  #   container_name: authmetodology-api
+  #   build:
+  #     context: ../../
+  #     dockerfile: AuthMetodology/Dockerfile
+  #   ports:
+  #     - "8080:80"
+  #   networks:
+  #     - authNet
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: Development
+  #     ASPNETCORE_URLS: "http://+:80"
+  #   restart: unless-stopped
+
+  postgres:
+    container_name: mus_db
+    image: postgres:latest
+    volumes: 
+      - ../postgres-data:/var/lib/postgresql/data    
+    environment:
+      POSTGRES_DB: musdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123!
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d musdb"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - musNet
+    restart: unless-stopped
+  
+  # redis:
+  #   container_name: redis
+  #   image: redis
+  #   restart: always
+  #   volumes: 
+  #     - ../../AuthMetodology.Infrastructure/redis-data:/data
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - authNet
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+
+networks:
+  musNet:
+    name: musNet
+    driver: bridge
+    # external: true
+#   logNet:
+#     name: logNet
+#     driver: bridge
+#     external: true
+  
+
+volumes:
+  postgres-data:
+#   rabbit-data:
+#   redis-data:
+#   grafana-data:  

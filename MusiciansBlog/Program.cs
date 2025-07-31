@@ -1,3 +1,7 @@
+using Mappify;
+using MusiciansBlog.API.Infrastructure;
+using MusiciansBlog.API.Infrastructure.Blogs.Common;
+using MusiciansBlog.API.Infrastructure.Comments.Common;
 using MusiciansBlog.API.Middleware;
 
 namespace MusiciansBlog
@@ -14,6 +18,18 @@ namespace MusiciansBlog
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddNpgsql<MyDbContext>(
+                builder.Configuration.GetConnectionString("PostgresConnection"));
+
+            builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
+            builder.Services.AddScoped<IBlogsRepository, BlogsRepository>();
+
+            builder.Services.AddMediatR(cfg => 
+                cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+            builder.Services.AddMappify();
+            builder.Services.AddMappifyProfileForAssembly(typeof(Program));
 
             var app = builder.Build();
 
