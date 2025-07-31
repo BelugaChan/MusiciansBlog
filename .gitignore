@@ -228,4 +228,4 @@ __pycache__/
 # Windows thumbnail cache files
 Thumbs.db
 
-appsettings.json
+postgres-data/
