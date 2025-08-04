@@ -54,6 +54,12 @@ namespace MusiciansBlog.API.Infrastructure.Users.Common
         [Column("refreshTokenExpiry")]
         public DateTime RefreshTokenExpiry { get; set; }
 
+        /// <summary>
+        /// Тип аутентификации.
+        /// </summary>
+        [Column("authType")]
+        public AuthType AuthType { get; set; }
+
         public List<BlogEntity> Blogs { get; set; } = new();
 
         public List<CommentEntity> Comments { get; set; } = new();

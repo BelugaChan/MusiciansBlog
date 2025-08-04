@@ -1,0 +1,25 @@
+﻿using MediatR;
+using System.ComponentModel.DataAnnotations;
+
+namespace MusiciansBlog.API.Infrastructure.Users.LoginUser
+{
+    public class LoginUserCommand : IRequest<LoginUserResponse>
+    {
+        /// <summary>
+        /// Электронная почта.
+        /// </summary>
+        [Required(ErrorMessage = "Email is required")]
+        [Length(3, 30, ErrorMessage = "Must be between 5 and 30 characters")]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        // <summary>
+        /// Пароль пользователя.
+        /// </summary>
+        [Required(ErrorMessage = "Password is required")]
+        [StringLength(20, MinimumLength = 8, ErrorMessage = "Пароль должен быть от 8 до 20 символов")]
+        [RegularExpression(@"^(?=[^А-Яа-я]*$)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$",
+        ErrorMessage = "Пароль должен содержать цифры, спецсимволы, латинские буквы в верхнем и нижнем регистре и не должен содержать кириллицу")]
+        public string Password { get; set; }
+    }
+}

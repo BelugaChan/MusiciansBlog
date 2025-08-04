@@ -64,6 +64,11 @@ namespace MusiciansBlog.API.Infrastructure.Mappers
                 Email = src.Email,
                 Username = src.Username,
             });
+
+            //mappify.CreateMap<LoginUserCommand, UserModel>(_ => new UserModel
+            //{
+            //    UserId = Guid.NewGuid(),
+            //});
         }
     }
 }
