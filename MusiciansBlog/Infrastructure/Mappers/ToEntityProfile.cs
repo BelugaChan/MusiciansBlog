@@ -44,7 +44,8 @@ namespace MusiciansBlog.API.Infrastructure.Mappers
                 PasswordHash = src.PasswordHash,
                 Username = src.Username,
                 RefreshToken = src.RefreshToken,
-                RefreshTokenExpiry = src.RefreshTokenExpiry
+                RefreshTokenExpiry = src.RefreshTokenExpiry,
+                AuthType = src.AuthType,
             });
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace MusiciansBlog.API.Infrastructure.Users.Common
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MusiciansBlog.API.Infrastructure.Users.Common
 {
     /// <summary>
     /// Пользователь.
@@ -39,5 +41,10 @@
         /// Дата истечения токена обновления.
         /// </summary>
         public DateTime RefreshTokenExpiry { get; set; }
+
+        /// <summary>
+        /// Тип аутентификации.
+        /// </summary>
+        public AuthType AuthType { get; set; }
     }
 }

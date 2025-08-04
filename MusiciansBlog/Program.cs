@@ -8,6 +8,7 @@ using MusiciansBlog.API.Infrastructure.Blogs.Common;
 using MusiciansBlog.API.Infrastructure.Comments.Common;
 using MusiciansBlog.API.Infrastructure.Users.Common;
 using MusiciansBlog.API.Middleware;
+using Serilog;
 
 namespace MusiciansBlog.API
 {
@@ -29,6 +30,14 @@ namespace MusiciansBlog.API
                     builder.Configuration.GetConnectionString("PostgresConnection")
                     )
                 );
+
+            //logger
+            var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddSerilog(logger);
 
             builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
             builder.Services.AddScoped<IBlogsRepository, BlogsRepository>();

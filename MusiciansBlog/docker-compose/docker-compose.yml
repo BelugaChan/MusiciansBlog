@@ -16,7 +16,19 @@ services:
   #     ASPNETCORE_ENVIRONMENT: Development
   #     ASPNETCORE_URLS: "http://+:80"
   #   restart: unless-stopped
-
+  # loki:
+  #   restart: always
+  #   image: grafana/loki:2.9.3
+  #   command: -config.file=/etc/loki/local-config.yaml
+  #   ports:
+  #     - 3100:3100
+  grafana:
+    restart: always
+    image: grafana/grafana:10.1.6
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
   postgres:
     container_name: mus_db
     image: postgres:latest

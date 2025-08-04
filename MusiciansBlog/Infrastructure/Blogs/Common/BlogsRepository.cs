@@ -29,12 +29,12 @@ namespace MusiciansBlog.API.Infrastructure.Blogs.Common
 
             if (existingEntity is not null)
             {
-                entity.Updated = DateTimeOffset.Now;
+                entity.Updated = DateTimeOffset.UtcNow;
                 _dbContext.Blogs.Update(entity);
             }
             else
             {
-                entity.Created = DateTimeOffset.Now;
+                entity.Created = DateTimeOffset.UtcNow;
                 await _dbContext.Blogs.AddAsync(entity, ct);
             }
             

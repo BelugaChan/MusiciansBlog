@@ -8,6 +8,8 @@ namespace MusiciansBlog.API.Authentication.Providers
         {
             _accessor = accessor;
         }
+
+        /// <inheritdoc />
         public void AppendTokenToCookie(string key, string tokenValue, DateTime tokenExpiry)
         {
             _accessor.HttpContext.Response.Cookies.Append(key, tokenValue, new CookieOptions

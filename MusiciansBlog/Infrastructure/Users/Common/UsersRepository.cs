@@ -71,5 +71,21 @@ namespace MusiciansBlog.API.Infrastructure.Users.Common
                                           || i.Email == email, cancellationToken);
             return res;
         }
+
+        public async Task<UserModel> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        {
+            var existingEntity = await _dbContext
+                .Users
+                .FindAsync(userId, cancellationToken);
+
+            if(existingEntity is null)
+            {
+                return null;
+            }
+
+            var model = _mapper.Map<UserModel>(existingEntity);
+
+            return model;
+        }
     }
 }

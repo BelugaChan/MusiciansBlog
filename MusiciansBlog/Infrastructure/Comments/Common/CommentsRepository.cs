@@ -30,12 +30,12 @@ namespace MusiciansBlog.API.Infrastructure.Comments.Common
 
             if (existingEntity is not null)
             {
-                entity.Updated = DateTimeOffset.Now;
+                entity.Updated = DateTimeOffset.UtcNow;
                 _dbContext.Comments.Update(entity);
             }
             else
             {
-                entity.Created = DateTimeOffset.Now;
+                entity.Created = DateTimeOffset.UtcNow;
                 await _dbContext.Comments.AddAsync(entity, ct);
             }
 
