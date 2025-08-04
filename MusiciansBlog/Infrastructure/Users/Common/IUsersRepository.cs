@@ -6,6 +6,8 @@
 
         Task<UserModel> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
 
+        Task<UserModel> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default);
+
         Task<bool> UpdateAsync(Guid userId, Action<UserEntity> updateUser, CancellationToken cancellationToken = default);
 
         Task<bool> CheckUserExistence(string userName, string email, CancellationToken cancellationToken = default);

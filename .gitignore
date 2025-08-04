@@ -228,4 +228,9 @@ __pycache__/
 # Windows thumbnail cache files
 Thumbs.db
 
+grafana-data/
 postgres-data/
+appsettings.json
+
+Configs/
+/MusiciansBlog/appsettings.json

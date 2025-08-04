@@ -17,12 +17,14 @@ namespace MusiciansBlog.API.Authentication.Providers
             _options = options.Value;
         }
 
+        /// <inheritdoc />
         public string GenerateRefreshToken()
         {
             var randomBytes = RandomNumberGenerator.GetBytes(64);
             return Convert.ToBase64String(randomBytes);
         }
 
+        /// <inheritdoc />
         public string GenerateToken(UserModel model)
         {
             var tokenExpireDate = DateTime.UtcNow.AddMinutes(_options.AccessTokenExpiryMinutes);

@@ -7,6 +7,7 @@ using MusiciansBlog.API.Infrastructure.Comments.AddOrUpdateComment;
 using MusiciansBlog.API.Infrastructure.Comments.Common;
 using MusiciansBlog.API.Infrastructure.Comments.DeleteComment;
 using MusiciansBlog.API.Infrastructure.Comments.GetComments;
+using MusiciansBlog.API.Infrastructure.Users.AuthGoogle;
 using MusiciansBlog.API.Infrastructure.Users.Common;
 using MusiciansBlog.API.Infrastructure.Users.RegisterUser;
 
@@ -60,9 +61,10 @@ namespace MusiciansBlog.API.Infrastructure.Mappers
             mappify.CreateMap<RegisterUserCommand, UserModel>(src => new UserModel
             {
                 UserId = Guid.NewGuid(),
-                Created = DateTimeOffset.Now,
+                Created = DateTimeOffset.UtcNow,
                 Email = src.Email,
                 Username = src.Username,
+                AuthType = AuthType.Ordinary
             });
 
             //mappify.CreateMap<LoginUserCommand, UserModel>(_ => new UserModel

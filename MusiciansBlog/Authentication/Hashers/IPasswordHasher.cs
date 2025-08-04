@@ -12,6 +12,11 @@
         /// <returns></returns>
         string Generate(string password);
 
+        /// <summary>
+        /// Метод по валидации хэша пароля.
+        /// </summary>
+        /// <param name="password">исходный пароль</param>
+        /// <returns></returns>
         bool VerifyPassword(string password, string hashedPassword);
     }
 }
