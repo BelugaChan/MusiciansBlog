@@ -1,12 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MusiciansBlog.API.Converters;
 using MusiciansBlog.API.Infrastructure.Blogs.Common;
 using MusiciansBlog.API.Infrastructure.Comments.Common;
 using MusiciansBlog.API.Infrastructure.Users.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusiciansBlog.API.Infrastructure
 {
@@ -43,6 +39,13 @@ namespace MusiciansBlog.API.Infrastructure
 
             modelBuilder.Entity<CommentEntity>().HasQueryFilter(c => !c.IsDeleted);
             modelBuilder.Entity<BlogEntity>().HasQueryFilter(c => !c.IsDeleted);
+        }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder
+                .Properties<DateTimeOffset>()
+                .HaveConversion<DateTimeOffsetConverter>();
         }
     }
 }

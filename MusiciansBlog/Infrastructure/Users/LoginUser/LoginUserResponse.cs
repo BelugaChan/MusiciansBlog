@@ -1,6 +1,6 @@
-﻿namespace MusiciansBlog.API.Infrastructure.Users.RegisterUser
+﻿namespace MusiciansBlog.API.Infrastructure.Users.LoginUser
 {
-    public class RegisterUserResponse
+    public class LoginUserResponse
     {
         public required Guid UserId { get; set; }
 

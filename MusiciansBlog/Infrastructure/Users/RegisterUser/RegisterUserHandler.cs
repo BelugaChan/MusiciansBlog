@@ -1,11 +1,11 @@
 ﻿using Mappify;
 using MediatR;
 using Microsoft.Extensions.Options;
+using MusiciansBlog.API.Authentication.Hashers;
+using MusiciansBlog.API.Authentication.Options;
+using MusiciansBlog.API.Authentication.Providers;
 using MusiciansBlog.API.Exceptions;
 using MusiciansBlog.API.Infrastructure.Users.Common;
-using MusiciansBlog.API.Infrastructure.Users.Hashers;
-using MusiciansBlog.API.Infrastructure.Users.Options;
-using MusiciansBlog.API.Infrastructure.Users.Providers;
 
 namespace MusiciansBlog.API.Infrastructure.Users.RegisterUser
 {
@@ -32,31 +32,37 @@ namespace MusiciansBlog.API.Infrastructure.Users.RegisterUser
             _options = options.Value;
         }
 
-        //FIX JWT Token assignment
         public async Task<RegisterUserResponse> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var existingEntity = await _usersRepository.GetByEmailAsync(request.Email, cancellationToken);
+            var isUserAlreadyExists =
+                await _usersRepository
+                    .CheckUserExistence(request.Username, request.Email, cancellationToken);
 
-            if (existingEntity is null)
+            if (isUserAlreadyExists)
             {
-                var model = _mappify.Map<UserModel>(request);
-
-                var hashedPassword = _passwordHasher.Generate(request.Password);
-                var refreshToken = _provider.GenerateRefreshToken();
-
-                model.RefreshToken = refreshToken;
-                model.RefreshTokenExpiry = DateTime.UtcNow.AddDays(_options.RefreshTokenExpiryDays);
-
-                await _usersRepository.AddAsync(model, cancellationToken);
-
-                return new RegisterUserResponse() 
-                {
-                    AccessToken = string.Empty,//FIX
-                    RefreshToken = model.RefreshToken,
-                    UserId = model.UserId
-                };
+                throw new EntityAlreadyExistsException();
             }
-            throw new EntityAlreadyExistsException();
+
+            var model = _mappify.Map<UserModel>(request);
+
+            var hashedPassword = _passwordHasher.Generate(request.Password);
+            var refreshToken = _provider.GenerateRefreshToken();
+            var accessToken = _provider.GenerateToken(model); 
+            var refreshTokenExpiry = DateTime.UtcNow.AddDays(_options.RefreshTokenExpiryDays);
+
+            model.RefreshToken = refreshToken;
+            model.RefreshTokenExpiry = refreshTokenExpiry;
+            model.PasswordHash = hashedPassword;
+
+            await _usersRepository.AddAsync(model, cancellationToken);
+
+            return new RegisterUserResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = model.RefreshToken,
+                RefreshTokenExpiry = refreshTokenExpiry,
+                UserId = model.UserId
+            };
 
         }
     }

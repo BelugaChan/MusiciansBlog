@@ -46,5 +46,30 @@ namespace MusiciansBlog.API.Infrastructure.Users.Common
 
             return model;
         }
+
+        public async Task<bool> UpdateAsync(Guid userId, Action<UserEntity> updateUser, CancellationToken cancellationToken)
+        {
+            var existingUser = await _dbContext.Users.FindAsync(userId, cancellationToken);
+
+            if (existingUser is null)
+            {
+                return false;
+                throw new EntityNotFoundException();
+            }
+
+            updateUser(existingUser);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return true;
+        }
+
+        public async Task<bool> CheckUserExistence(string userName, string email, CancellationToken cancellationToken)
+        {
+            var res = await _dbContext
+                .Users
+                .AnyAsync(i => i.Username == userName
+                                          || i.Email == email, cancellationToken);
+            return res;
+        }
     }
 }

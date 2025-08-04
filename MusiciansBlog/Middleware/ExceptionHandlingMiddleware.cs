@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MusiciansBlog.API.Exceptions;
+﻿using MusiciansBlog.API.Exceptions;
 using System.Net;
 
 namespace MusiciansBlog.API.Middleware

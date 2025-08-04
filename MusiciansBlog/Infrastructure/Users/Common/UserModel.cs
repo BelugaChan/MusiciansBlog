@@ -8,7 +8,7 @@
         /// <summary>
         /// Id.
         /// </summary>
-        public Guid UserId { get; set; } = Guid.Empty;
+        public Guid UserId { get; set; } = Guid.NewGuid();
 
         /// <summary>
         /// Дата создания пользователя.
@@ -18,7 +18,7 @@
         /// <summary>
         /// Электронная почта.
         /// </summary>
-        public required string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         /// <summary>
         /// Хэш пароля пользователя.
@@ -28,7 +28,7 @@
         /// <summary>
         /// Никнейм пользователя.
         /// </summary>
-        public required string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
 
         /// <summary>
         /// Токен обновления.
