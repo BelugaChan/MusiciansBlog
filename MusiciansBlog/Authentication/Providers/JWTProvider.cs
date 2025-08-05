@@ -32,6 +32,7 @@ namespace MusiciansBlog.API.Authentication.Providers
             Claim[] claims = new Claim[]
             {
                 new Claim(ClaimTypes.NameIdentifier, model.UserId.ToString()),
+                new Claim(ClaimTypes.Email, model.Email),
                 new Claim(ClaimTypes.Expiration, tokenExpireDate.ToString())
             };
 

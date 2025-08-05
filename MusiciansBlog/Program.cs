@@ -1,7 +1,9 @@
 using Mappify;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using MusiciansBlog.API.Authentication.Extensions;
 using MusiciansBlog.API.Authentication.Hashers;
+using MusiciansBlog.API.Authentication.Options;
 using MusiciansBlog.API.Authentication.Providers;
 using MusiciansBlog.API.Infrastructure;
 using MusiciansBlog.API.Infrastructure.Blogs.Common;
@@ -9,6 +11,7 @@ using MusiciansBlog.API.Infrastructure.Comments.Common;
 using MusiciansBlog.API.Infrastructure.Users.Common;
 using MusiciansBlog.API.Middleware;
 using Serilog;
+using StackExchange.Redis;
 
 namespace MusiciansBlog.API
 {
@@ -37,12 +40,28 @@ namespace MusiciansBlog.API
                 .CreateLogger();
 
             builder.Logging.ClearProviders();
-            builder.Logging.AddSerilog(logger);
+            builder.Host.UseSerilog(logger);
+
+            //redis
+            builder.Services.AddStackExchangeRedisCache(opt =>
+            {
+                opt.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+                
+            });
+
+            //options
+            builder.Services.Configure<RedisCacheUsersOptions>(
+                builder.Configuration.GetSection(nameof(RedisCacheUsersOptions)));
+
+            //cache
+            builder.Services.AddSingleton<IConnectionMultiplexer>(
+                ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")!));
 
             builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
             builder.Services.AddScoped<IBlogsRepository, BlogsRepository>();
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
+            builder.Services.AddScoped<IRedisProvider, RedisProvider>();
             builder.Services.AddScoped<ICookieProvider, CookieProvider>();  
             builder.Services.AddScoped<IJWTProvider,  JWTProvider>();
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
@@ -61,6 +80,8 @@ namespace MusiciansBlog.API
 
 
             var app = builder.Build();
+
+            app.UseSerilogRequestLogging();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

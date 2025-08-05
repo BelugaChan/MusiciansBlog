@@ -1,17 +1,28 @@
-﻿
-using Mappify;
+﻿using Mappify;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MusiciansBlog.API.Authentication.Options;
+using MusiciansBlog.API.Authentication.Providers;
 using MusiciansBlog.API.Exceptions;
+using StackExchange.Redis;
+using System.Text;
+using System.Text.Json;
 
 namespace MusiciansBlog.API.Infrastructure.Users.Common
 {
     public class UsersRepository : IUsersRepository
     {
         private readonly IMappify _mapper;
+        private readonly IRedisProvider _provider;
         private readonly MyDbContext _dbContext;
-        public UsersRepository(IMappify mapper, MyDbContext dbContext)
+
+        public UsersRepository(
+            IMappify mapper, 
+            IRedisProvider provider,
+            MyDbContext dbContext)
         {
             _mapper = mapper;
+            _provider = provider;
             _dbContext = dbContext;
         }
 
@@ -31,18 +42,32 @@ namespace MusiciansBlog.API.Infrastructure.Users.Common
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<UserModel> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+        public async Task<UserModel?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
+
+            var res = await _provider.GetStringByKeyAsync<UserModel>(email);
+
+            if (res is not null)
+            {
+                return res;
+            }
+
+            //cache miss, read from DB
             var existingEntity = await _dbContext.Users
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
             
+            //no data in DB..
             if(existingEntity is null)
             {
                 return null;
             }
 
             var model = _mapper.Map<UserModel>(existingEntity);
+
+            //set data in cache
+            await _provider.SetStringAsync(email, model);
+            //await _redisDatabase.StringSetAsync(cacheKey, JsonSerializer.Serialize(model), TimeSpan.FromMinutes(_options.MinutesToLive));
 
             return model;
         }
@@ -57,8 +82,12 @@ namespace MusiciansBlog.API.Infrastructure.Users.Common
                 throw new EntityNotFoundException();
             }
 
+            //update db entity
             updateUser(existingUser);
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            //invalidate outdated item data in the cache 
+            await _provider.SetStringAsync(existingUser.Email, existingUser);
 
             return true;
         }
@@ -70,22 +99,6 @@ namespace MusiciansBlog.API.Infrastructure.Users.Common
                 .AnyAsync(i => i.Username == userName
                                           || i.Email == email, cancellationToken);
             return res;
-        }
-
-        public async Task<UserModel> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default)
-        {
-            var existingEntity = await _dbContext
-                .Users
-                .FindAsync(userId, cancellationToken);
-
-            if(existingEntity is null)
-            {
-                return null;
-            }
-
-            var model = _mapper.Map<UserModel>(existingEntity);
-
-            return model;
         }
     }
 }
