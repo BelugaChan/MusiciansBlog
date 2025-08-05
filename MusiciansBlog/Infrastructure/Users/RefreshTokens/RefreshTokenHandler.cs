@@ -29,8 +29,9 @@ namespace MusiciansBlog.API.Infrastructure.Users.RefreshTokens
         {
             var principal = GetClaimsFromExpiredAccessToken(request.AccessToken);
             var userId = Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userEmail = principal.FindFirstValue(ClaimTypes.Email);
 
-            var existingUser = await _usersRepository.GetByIdAsync(userId, cancellationToken);
+            var existingUser = await _usersRepository.GetByEmailAsync(userEmail, cancellationToken);
 
             if(existingUser is null)
             {

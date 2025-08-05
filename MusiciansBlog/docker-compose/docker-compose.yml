@@ -1,34 +1,31 @@
 ﻿name: musService
 services:
-  # authmetodology-api:
-  #   container_name: authmetodology-api
-  #   build:
-  #     context: ../../
-  #     dockerfile: AuthMetodology/Dockerfile
-  #   ports:
-  #     - "8080:80"
-  #   networks:
-  #     - authNet
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   environment:
-  #     ASPNETCORE_ENVIRONMENT: Development
-  #     ASPNETCORE_URLS: "http://+:80"
-  #   restart: unless-stopped
-  # loki:
-  #   restart: always
-  #   image: grafana/loki:2.9.3
-  #   command: -config.file=/etc/loki/local-config.yaml
-  #   ports:
-  #     - 3100:3100
+
+  loki:
+    restart: always
+    # image: grafana/loki:2.9.3
+    image: grafana/loki:latest
+    volumes:
+      - ../Configs/loki-config.yml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - 3100:3100
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   grafana:
     restart: always
-    image: grafana/grafana:10.1.6
+    # image: grafana/grafana:10.1.6
+    image: grafana/grafana:latest
     ports:
       - 3000:3000
     volumes:
-      - grafana-data:/var/lib/grafana
+      - ../grafana-data:/var/lib/grafana
+    depends_on:
+      loki:
+        condition: service_started
+
   postgres:
     container_name: mus_db
     image: postgres:latest
@@ -49,19 +46,19 @@ services:
       - musNet
     restart: unless-stopped
   
-  # redis:
-  #   container_name: redis
-  #   image: redis
-  #   restart: always
-  #   volumes: 
-  #     - ../../AuthMetodology.Infrastructure/redis-data:/data
-  #   ports:
-  #     - "6379:6379"
-  #   networks:
-  #     - authNet
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
+  redis:
+    container_name: redis
+    image: redis
+    restart: always
+    volumes: 
+      - ../redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - musNet
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 networks:
   musNet:
@@ -76,6 +73,5 @@ networks:
 
 volumes:
   postgres-data:
-#   rabbit-data:
-#   redis-data:
-#   grafana-data:  
+  redis-data:
+  grafana-data:  
