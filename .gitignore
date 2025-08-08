@@ -230,7 +230,7 @@ Thumbs.db
 
 grafana-data/
 postgres-data/
-appsettings.json
+redis-data/
 
 Configs/
 /MusiciansBlog/appsettings.json

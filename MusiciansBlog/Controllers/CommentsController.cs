@@ -18,7 +18,7 @@ namespace MusiciansBlog.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrUpdateBlog(
+        public async Task<IActionResult> CreateOrUpdateComment(
             [FromBody] AddOrUpdateCommentCommand command, CancellationToken cancellationToken)
         {
             await _mediator.Send(command, cancellationToken);
@@ -26,7 +26,7 @@ namespace MusiciansBlog.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteBlog(
+        public async Task<IActionResult> DeleteComment(
             [FromBody] DeleteCommentCommand command, CancellationToken cancellationToken)
         {
             await _mediator.Send(command, cancellationToken);
@@ -34,7 +34,7 @@ namespace MusiciansBlog.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetBlogs(
+        public async Task<IActionResult> GetBlogComments(
             [FromBody] GetCommentsQuery query, CancellationToken cancellationToken)
         {
             var response = await _mediator.Send(query, cancellationToken);

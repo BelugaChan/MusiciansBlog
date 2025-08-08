@@ -19,6 +19,7 @@ namespace MusiciansBlog.API.Authentication.Providers
             _options = options.Value;
         }
 
+        /// <inheritdoc />
         public async Task<T?> GetStringByKeyAsync<T>(string dynamicKey)
             where T : class
         {
@@ -35,6 +36,7 @@ namespace MusiciansBlog.API.Authentication.Providers
             return default;
         }
 
+        /// <inheritdoc />
         public async Task SetStringAsync<T>(string dynamicKey, T value)
             where T : class
         {
@@ -43,6 +45,11 @@ namespace MusiciansBlog.API.Authentication.Providers
             await _redisDatabase.StringSetAsync(cacheKey, JsonSerializer.Serialize(value), TimeSpan.FromMinutes(_options.MinutesToLive));
         }
 
+        /// <summary>
+        /// Совмещение уникальной динамической и статической составляющей при создании ключа для сохранения сущности в Redis
+        /// </summary>
+        /// <param name="dynamicKey"></param>
+        /// <returns></returns>
         private string GenerateCacheKey(string dynamicKey)
         {
             return $"{_options.StaticKey}:{dynamicKey}";
