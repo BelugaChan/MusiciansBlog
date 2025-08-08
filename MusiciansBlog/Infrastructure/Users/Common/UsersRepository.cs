@@ -5,6 +5,8 @@ using MusiciansBlog.API.Authentication.Options;
 using MusiciansBlog.API.Authentication.Providers;
 using MusiciansBlog.API.Exceptions;
 using StackExchange.Redis;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Text;
 using System.Text.Json;
 

@@ -10,6 +10,8 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
     ports:
       - 3100:3100
+    networks:
+      - musNet
     depends_on:
       postgres:
         condition: service_healthy
@@ -22,9 +24,11 @@ services:
       - 3000:3000
     volumes:
       - ../grafana-data:/var/lib/grafana
-    depends_on:
-      loki:
-        condition: service_started
+    networks:
+      - musNet
+    # depends_on:
+    #   loki:
+    #     condition: service_started
 
   postgres:
     container_name: mus_db
@@ -59,6 +63,19 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ../Configs/prometheus.yml:/etc/prometheus/prometheus.yml
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    networks:
+      - musNet
 
 networks:
   musNet:

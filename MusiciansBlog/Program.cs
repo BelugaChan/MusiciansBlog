@@ -1,14 +1,17 @@
 using Mappify;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using MusiciansBlog.API.Authentication.Extensions;
 using MusiciansBlog.API.Authentication.Hashers;
 using MusiciansBlog.API.Authentication.Options;
 using MusiciansBlog.API.Authentication.Providers;
+using MusiciansBlog.API.Background;
 using MusiciansBlog.API.Infrastructure;
 using MusiciansBlog.API.Infrastructure.Blogs.Common;
 using MusiciansBlog.API.Infrastructure.Comments.Common;
 using MusiciansBlog.API.Infrastructure.Users.Common;
+using MusiciansBlog.API.Infrastructure.Users.Pipelines;
 using MusiciansBlog.API.Middleware;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -36,6 +39,9 @@ namespace MusiciansBlog.API
                     )
                 );
 
+            //hosted(background) services
+            builder.Services.AddHostedService<MetricsCollectorBackgroundService>();
+
             //logger
             var logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(builder.Configuration)
@@ -58,8 +64,9 @@ namespace MusiciansBlog.API
                 resource.AddService(builder.Environment.ApplicationName));
 
             openTelemetryBuilder.WithMetrics(metrics => metrics
+                .AddMeter("MyApp.BusinessMetrics")
+                .AddMeter("MyApp.Redis")
                 .AddAspNetCoreInstrumentation()
-                .AddConsoleExporter()
                 .AddPrometheusExporter());
 
             //options
@@ -91,6 +98,9 @@ namespace MusiciansBlog.API
             //authentication
             builder.Services.AddJwtSupport(builder.Configuration);
 
+
+            //mediatR pipelines
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(MetricsBehaviour<,>));
 
             var app = builder.Build();
 
