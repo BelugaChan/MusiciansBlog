@@ -50,19 +50,11 @@ namespace MusiciansBlog.API.Authentication.Extensions
                     }
                 };
             })
-            .AddGoogleOpenIdConnect(opt =>
+            .AddGoogleOpenIdConnect(opt => //google support
                 {
                     opt.ClientId = googleConfig["ClientId"];
                     opt.ClientSecret = googleConfig["ClientSecret"];
-                    //opt.SignInScheme = IdentityConstants.ExternalScheme;
                 });
-            //.AddGoogle("google",
-            //    opt =>
-            //    {
-            //        opt.ClientId = googleConfig["ClientId"];
-            //        opt.ClientSecret = googleConfig["ClientSecret"];
-            //        opt.SignInScheme = IdentityConstants.ExternalScheme;
-            //    });
         }
     }
 }

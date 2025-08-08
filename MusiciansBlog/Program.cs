@@ -10,6 +10,8 @@ using MusiciansBlog.API.Infrastructure.Blogs.Common;
 using MusiciansBlog.API.Infrastructure.Comments.Common;
 using MusiciansBlog.API.Infrastructure.Users.Common;
 using MusiciansBlog.API.Middleware;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using Serilog;
 using StackExchange.Redis;
 
@@ -48,6 +50,17 @@ namespace MusiciansBlog.API
                 opt.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
                 
             });
+
+            //metrics
+            var openTelemetryBuilder = builder.Services.AddOpenTelemetry();
+
+            openTelemetryBuilder.ConfigureResource(resource =>
+                resource.AddService(builder.Environment.ApplicationName));
+
+            openTelemetryBuilder.WithMetrics(metrics => metrics
+                .AddAspNetCoreInstrumentation()
+                .AddConsoleExporter()
+                .AddPrometheusExporter());
 
             //options
             builder.Services.Configure<RedisCacheUsersOptions>(
@@ -95,10 +108,11 @@ namespace MusiciansBlog.API
             app.UseAuthentication(); 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+            app.MapPrometheusScrapingEndpoint();
 
             app.Run();
         }

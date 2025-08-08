@@ -30,6 +30,7 @@ namespace MusiciansBlog.API.Middleware
             {
                 EntityAlreadyExistsException _ => new ExceptionResponse(HttpStatusCode.Conflict, "объект уже существует"),
                 EntityNotFoundException _ => new ExceptionResponse(HttpStatusCode.NotFound, "объект не найден"),
+                UnvalidRefreshTokenException _ => new ExceptionResponse(HttpStatusCode.Conflict, "Некорректный refresh токен, либо истечение времени жизни refresh токена"),
                 DbUpdateException _ => new ExceptionResponse(HttpStatusCode.InternalServerError, "DB update wasn't successfull"),
                 _ => new ExceptionResponse(HttpStatusCode.InternalServerError, "ошибка сервера")
             };
