@@ -77,6 +77,20 @@ services:
     networks:
       - musNet
 
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - "9093:9093"
+    volumes:
+      - ../Configs/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    container_name: alertmanager
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/etc/alertmanager/data'
+    networks:
+      - musNet
+
 networks:
   musNet:
     name: musNet
