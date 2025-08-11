@@ -33,8 +33,8 @@ namespace MusiciansBlog.API.Controllers
             _configuration = configuration;
             _options = options.Value;
 
-            var apiCallsMeter = new Meter("Api.Calls");
-            _apiCallsCounter = apiCallsMeter.CreateCounter<long>("api.calls.count");
+            var apiCallsMeter = new Meter("myapp.api");
+            _apiCallsCounter = apiCallsMeter.CreateCounter<long>("calls.count");
         }
 
         /// <summary>
@@ -57,7 +57,6 @@ namespace MusiciansBlog.API.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> Login([FromBody] LoginUserCommand command, CancellationToken cancellationToken)
         {
-
             var result = await _mediator.Send(command, cancellationToken);
             
             AddTokenToCookie(

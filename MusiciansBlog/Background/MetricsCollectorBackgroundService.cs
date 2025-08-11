@@ -14,8 +14,8 @@ namespace MusiciansBlog.API.Background
             IConnectionMultiplexer connectionMultiplexer)
         {
             _connectionMultiplexer = connectionMultiplexer;
-            var meter = meterFactory.Create("MyApp.Redis");
-            _keysGauge = meter.CreateGauge<int>("redis.keys.count");
+            var meter = meterFactory.Create("myapp.redis");
+            _keysGauge = meter.CreateGauge<int>("keys.count");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
