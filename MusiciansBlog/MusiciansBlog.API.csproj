@@ -10,14 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Configs\alertmanager.yml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Google.Apis.Auth" Version="1.70.0" />
     <PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.70.0" />
     <PackageReference Include="Mappify" Version="1.2.2" />
+    <PackageReference Include="MathNet.Numerics" Version="6.0.0-beta2" />
     <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.18" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.18" />

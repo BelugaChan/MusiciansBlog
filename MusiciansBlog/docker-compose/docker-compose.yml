@@ -3,7 +3,6 @@ services:
 
   loki:
     restart: always
-    # image: grafana/loki:2.9.3
     image: grafana/loki:latest
     volumes:
       - ../Configs/loki-config.yml:/etc/loki/local-config.yaml
@@ -18,7 +17,6 @@ services:
 
   grafana:
     restart: always
-    # image: grafana/grafana:10.1.6
     image: grafana/grafana:latest
     ports:
       - 3000:3000
@@ -26,9 +24,6 @@ services:
       - ../grafana-data:/var/lib/grafana
     networks:
       - musNet
-    # depends_on:
-    #   loki:
-    #     condition: service_started
 
   postgres:
     container_name: mus_db
